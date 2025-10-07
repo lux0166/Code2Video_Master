@@ -132,7 +132,7 @@ pip install -r requirements.txt
 
 ### 2. Configure LLM API Keys
 
-Fill in your **API credentials** in `gpt_config.json`.
+Fill in your **API credentials** in `api_config.json`.
 
 * **LLM API**: 
   * Required for Planner & Coder.
