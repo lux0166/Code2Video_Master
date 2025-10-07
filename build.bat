@@ -60,11 +60,18 @@ echo #############################################################
 echo #            Bat dau xay dung file Code2Video.exe           #
 echo #############################################################
 echo.
-echo [*] Dang dong goi ung dung vao mot thu muc...
+echo [*] Dang dong goi ung dung voi "sieu hook" toan dien...
 echo [*] Day la buoc ton nhieu thoi gian nhat.
 
-REM --- Chay PyInstaller, su dung thu muc hook tuy chinh de dam bao tinh on dinh ---
-pyinstaller --noconfirm --name Code2Video --add-data "assets;assets" --add-data "json_files;json_files" --add-data "prompts;prompts" --additional-hooks-dir ./hooks src/app.py
+REM --- Chay PyInstaller voi thu muc hook tuy chinh de dam bao tinh on dinh ---
+REM --- "Sieu hook" se tu dong xu ly tat ca cac file va module bi thieu ---
+pyinstaller --noconfirm ^
+    --name Code2Video ^
+    --add-data "assets;assets" ^
+    --add-data "json_files;json_files" ^
+    --add-data "prompts;prompts" ^
+    --additional-hooks-dir ./hooks ^
+    src/app.py
 
 if %errorlevel% neq 0 (
     echo [LOI] Qua trinh dong goi that bai.
