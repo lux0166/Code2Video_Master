@@ -45,11 +45,11 @@ def generate_video_from_code(manim_code: str) -> str:
     with open(temp_file_path, "w", encoding="utf-8") as f:
         f.write(manim_code)
 
-    print(f"Executing Manim for scene: '{scene_name}' from file: '{temp_file_path}'")
+    print(f"Executing Manim for scene: '{scene_name}' from file: '{temp_file_path.name}'")
 
     # Run the Manim command with low quality for speed.
-    # We run it from within the temp_dir to ensure all media outputs are contained there.
-    cmd = ["manim", str(temp_file_path), scene_name, "-ql"]
+    # We run it from within the temp_dir, so we only need to pass the filename.
+    cmd = ["manim", temp_file_path.name, scene_name, "-ql"]
 
     try:
         result = subprocess.run(
@@ -58,9 +58,14 @@ def generate_video_from_code(manim_code: str) -> str:
             text=True,
             check=True, # Raise an exception if the command fails
             timeout=300, # 5-minute timeout for rendering
-            cwd=temp_dir # Set the working directory for the command
+            cwd=temp_dir, # Set the working directory for the command
+            encoding='utf-8', # Specify encoding for Windows
+            errors='ignore' # Ignore encoding errors
         )
         print(result.stdout)
+        if result.stderr:
+            print(f"--- MANIM STDERR ---\n{result.stderr}\n--------------------")
+
 
         # Construct the expected video file path inside the temp_dir
         # Manim output path is like: <cwd>/media/videos/temp_file_name_without_ext/480p15/SceneName.mp4
