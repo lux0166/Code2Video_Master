@@ -34,8 +34,7 @@
 https://github.com/user-attachments/assets/d906423f-734a-41c9-b102-b113ad3b3c25
 
 
-
-<!-- <p align="center">
+<p align="center">
 <table>
   <thead>
     <tr>
@@ -49,131 +48,53 @@ https://github.com/user-attachments/assets/d906423f-734a-41c9-b102-b113ad3b3c25
     <tr>
       <td style="text-align: center; vertical-align: middle;"><strong>Hanoi Problem</strong></td>
       <td style="text-align: center;">
-        <img src="assets/videos/veo/Hanoi.gif">
+        <img src="assets/videos/veo/Hanoi.gif" style="height: 160px; width: auto;">
       </td>
       <td style="text-align: center;">
-        <img src="assets/videos/wan/Hanoi.gif">
+        <img src="assets/videos/wan/Hanoi.gif" style="height: 160px; width: auto;">
       </td>
       <td style="text-align: center;">
-        <img src="assets/videos/code2video/Hanoi_4K_SpeedUp.gif">
+        <img src="assets/videos/code2video/Hanoi_4K_SpeedUp.gif" style="height: 160px; width: auto;">
       </td>
     </tr>
     <tr>
       <td style="text-align: center; vertical-align: middle;"><strong>Large Language Model</strong></td>
       <td style="text-align: center;">
-        <img src="assets/videos/veo/LLM.gif">
+        <img src="assets/videos/veo/LLM.gif" style="height: 160px; width: auto;">
       </td>
       <td style="text-align: center;">
-        <img src="assets/videos/wan/LLM.gif">
+        <img src="assets/videos/wan/LLM.gif" style="height: 160px; width: auto;">
       </td>
       <td style="text-align: center;">
-        <img src="assets/videos/code2video/LLM_speed.gif">
+        <img src="assets/videos/code2video/LLM_speed.gif" style="height: 160px; width: auto;">
       </td>
     </tr>
     <tr>
       <td style="text-align: center; vertical-align: middle;"><strong>Pure Fourier Series</strong></td>
       <td style="text-align: center;">
-        <img src="assets/videos/veo/fourier.gif">
+        <img src="assets/videos/veo/fourier.gif" style="height: 160px; width: auto;">
       </td>
       <td style="text-align: center;">
-        <img src="assets/videos/wan/fourier.gif">
+        <img src="assets/videos/wan/fourier.gif" style="height: 160px; width: auto;">
       </td>
       <td style="text-align: center;">
-        <img src="assets/videos/code2video/fourier_speed.gif">
+        <img src="assets/videos/code2video/fourier_speed.gif" style="height: 160px; width: auto;">
       </td>
     </tr>
     </tbody>
-</table>
-</p> -->
-
-<p align="center">
-<table style="width: 90%; border-collapse: collapse; text-align: center; margin: auto;">
-  <thead>
-    <tr>
-      <th style="text-align: center; padding: 8px;">Learning Topic</th>
-      <th style="text-align: center; padding: 8px;">Veo3</th>
-      <th style="text-align: center; padding: 8px;">Wan2.2</th>
-      <th style="text-align: center; padding: 8px;">Code2Video (Ours)</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td style="text-align: center; vertical-align: middle; font-weight: bold;">Hanoi Problem</td>
-      <td>
-        <div style="width: 320px; aspect-ratio: 16 / 9; overflow: hidden; margin: auto;">
-          <img src="assets/videos/veo/Hanoi.gif" style="width: 100%; height: 100%; object-fit: cover;">
-        </div>
-      </td>
-      <td>
-        <div style="width: 320px; aspect-ratio: 16 / 9; overflow: hidden; margin: auto;">
-          <img src="assets/videos/wan/Hanoi.gif" style="width: 100%; height: 100%; object-fit: cover;">
-        </div>
-      </td>
-      <td>
-        <div style="width: 320px; aspect-ratio: 16 / 9; overflow: hidden; margin: auto;">
-          <img src="assets/videos/code2video/Hanoi_4K_SpeedUp.gif" style="width: 100%; height: 100%; object-fit: cover;">
-        </div>
-      </td>
-    </tr>
-    <tr>
-      <td style="text-align: center; vertical-align: middle; font-weight: bold;">Large Language Model</td>
-      <td>
-        <div style="width: 320px; aspect-ratio: 16 / 9; overflow: hidden; margin: auto;">
-          <img src="assets/videos/veo/LLM.gif" style="width: 100%; height: 100%; object-fit: cover;">
-        </div>
-      </td>
-      <td>
-        <div style="width: 320px; aspect-ratio: 16 / 9; overflow: hidden; margin: auto;">
-          <img src="assets/videos/wan/LLM.gif" style="width: 100%; height: 100%; object-fit: cover;">
-        </div>
-      </td>
-      <td>
-        <div style="width: 320px; aspect-ratio: 16 / 9; overflow: hidden; margin: auto;">
-          <img src="assets/videos/code2video/LLM_speed.gif" style="width: 100%; height: 100%; object-fit: cover;">
-        </div>
-      </td>
-    </tr>
-    <tr>
-      <td style="text-align: center; vertical-align: middle; font-weight: bold;">Pure Fourier Series</td>
-      <td>
-        <div style="width: 320px; aspect-ratio: 16 / 9; overflow: hidden; margin: auto;">
-          <img src="assets/videos/veo/fourier.gif" style="width: 100%; height: 100%; object-fit: cover;">
-        </div>
-      </td>
-      <td>
-        <div style="width: 320px; aspect-ratio: 16 / 9; overflow: hidden; margin: auto;">
-          <img src="assets/videos/wan/fourier.gif" style="width: 100%; height: 100%; object-fit: cover;">
-        </div>
-      </td>
-      <td>
-        <div style="width: 320px; aspect-ratio: 16 / 9; overflow: hidden; margin: auto;">
-          <img src="assets/videos/code2video/fourier_speed.gif" style="width: 100%; height: 100%; object-fit: cover;">
-        </div>
-      </td>
-    </tr>
-  </tbody>
 </table>
 </p>
 
 ---
 
-## 🔥 Update
-- [x] [2025.10.6] We have updated the ground truth human-made videos and metadata for the [MMMC](https://huggingface.co/datasets/YanzheChen/MMMC) dataset.
-- [x] [2025.10.3] Thanks @_akhaliq for sharing our work on [Twitter](https://x.com/_akhaliq/status/1974189217304780863)!
-- [x] [2025.10.2] We release the [arXiv](https://arxiv.org/abs/2510.01174), [code](https://github.com/showlab/Code2Video) and [dataset](https://huggingface.co/datasets/YanzheChen/MMMC) .
-- [x] [2025.9.22] Code2Video has been accepted to the **Deep Learning for Code ([DL4C](https://dl4c.github.io/)) Workshop at NeurIPS 2025**.
-
-
----
-
 ### Table of Contents
 - [🌟 Overview](#-overview)
-- [🚀 Quick Start: Code2Video](#-try-code2video)
+- [🚀 Quick Start: Code2Video](#-how-to-create----code2video)
   - [1. Requirements](#1-requirements)
   - [2. Configure LLM API Keys](#2-configure-llm-api-keys)
   - [3. Run Agents](#3-run-agents)
   - [4. Project Organization](#4-project-organization)
-- [📊 Evaluation: MMMC](#-evaluation----mmmc)
+- [📊 Evaluation: MMMC](#-how-to-evaluate----mmmc)
 - [🙏 Acknowledgements](#-acknowledgements)
 - [📌 Citation](#-citation)
 
@@ -208,8 +129,6 @@ Unlike pixel-based text-to-video models, our approach leverages executable **Man
 cd src/
 pip install -r requirements.txt
 ````
-
-Here is the [official installation guide](https://docs.manim.community/en/stable/installation.html) for Manim Community v0.19.0, to help everyone correctly set up the environment.
 
 ### 2. Configure LLM API Keys
 
@@ -345,6 +264,3 @@ If you find our work useful, please cite:
       url={https://arxiv.org/abs/2510.01174}, 
 }
 ```
-
-If you like our project, please give us a star ⭐ on GitHub for the latest update.
-[![Star History Chart](https://api.star-history.com/svg?repos=showlab/Code2Video&type=Date)](https://star-history.com/#showlab/Code2Video&Date)
