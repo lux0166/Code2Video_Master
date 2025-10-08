@@ -1,8 +1,23 @@
 import re
 import subprocess
 import uuid
+import sys
 from pathlib import Path
 from typing import Optional
+
+def get_resource_path(relative_path: str) -> Path:
+    """
+    Get the absolute path to a resource, works for both development (source)
+    and for packaged (PyInstaller) applications.
+    """
+    if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+        # Running in a PyInstaller bundle
+        base_path = Path(sys._MEIPASS)
+    else:
+        # Running in a normal Python environment
+        base_path = Path(".").resolve()
+
+    return base_path / relative_path
 
 def find_scene_class(code: str) -> Optional[str]:
     """
@@ -28,51 +43,46 @@ def generate_video_from_code(manim_code: str) -> str:
     Raises:
         ValueError: If the scene class cannot be found or the video generation fails.
     """
-    # Use a dedicated directory for temporary files and outputs
-    # This keeps the project root clean.
     temp_dir = Path("temp_video_output")
     temp_dir.mkdir(exist_ok=True)
 
-    # Find the scene class name
     scene_name = find_scene_class(manim_code)
     if not scene_name:
         raise ValueError("Could not find a Manim Scene class in the provided code.")
 
-    # Create a unique temporary file for the code
     temp_file_name = f"scene_{uuid.uuid4().hex}.py"
     temp_file_path = temp_dir / temp_file_name
 
     with open(temp_file_path, "w", encoding="utf-8") as f:
         f.write(manim_code)
 
+    # Get the correct path to the custom TeX template
+    tex_template_path = get_resource_path("assets/custom_template.tex")
+    print(f"Using TeX template: {tex_template_path}")
+
     print(f"Executing Manim for scene: '{scene_name}' from file: '{temp_file_path.name}'")
 
-    # Run the Manim command with low quality for speed.
-    # We run it from within the temp_dir, so we only need to pass the filename.
-    cmd = ["manim", temp_file_path.name, scene_name, "-ql"]
+    # Add the --tex_template flag to the Manim command
+    cmd = ["manim", temp_file_path.name, scene_name, "-ql", "--tex_template", str(tex_template_path)]
 
     try:
         result = subprocess.run(
             cmd,
             capture_output=True,
             text=True,
-            check=True, # Raise an exception if the command fails
-            timeout=300, # 5-minute timeout for rendering
-            cwd=temp_dir, # Set the working directory for the command
-            encoding='utf-8', # Specify encoding for Windows
-            errors='ignore' # Ignore encoding errors
+            check=True,
+            timeout=300,
+            cwd=temp_dir,
+            encoding='utf-8',
+            errors='ignore'
         )
         print(result.stdout)
         if result.stderr:
             print(f"--- MANIM STDERR ---\n{result.stderr}\n--------------------")
 
-
-        # Construct the expected video file path inside the temp_dir
-        # Manim output path is like: <cwd>/media/videos/temp_file_name_without_ext/480p15/SceneName.mp4
         video_path = temp_dir / "media" / "videos" / temp_file_path.stem / "480p15" / f"{scene_name}.mp4"
 
         if not video_path.exists():
-            # This is a critical error, as Manim reported success but the file is missing.
             print(f"--- MANIM OUTPUT ---")
             print(f"stdout: {result.stdout}")
             print(f"stderr: {result.stderr}")
@@ -80,7 +90,6 @@ def generate_video_from_code(manim_code: str) -> str:
             raise ValueError(f"Video generation succeeded, but the output file could not be found. Searched in: {video_path.resolve()}")
 
         print(f"Video generated successfully: {video_path.resolve()}")
-        # Return the absolute path as a string for Gradio
         return str(video_path.resolve())
 
     except subprocess.CalledProcessError as e:
@@ -94,5 +103,3 @@ def generate_video_from_code(manim_code: str) -> str:
             print(e.stderr)
         print("---------------------")
         raise ValueError("Manim process timed out after 5 minutes.")
-    # No finally block to clean up files, so user can inspect them on error.
-    # The build.bat script will handle cleanup on subsequent runs if needed.
