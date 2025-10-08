@@ -47,38 +47,40 @@ def generate_video_from_code(manim_code: str) -> str:
     with open(temp_file_path, "w", encoding="utf-8") as f:
         f.write(manim_code)
 
-    # Manim will automatically find and use manim.cfg in the root directory.
-    # The command is now clean and simple.
+    # --- DYNAMIC CONFIGURATION ---
+    # This is the final, most robust solution.
+    # 1. Get the absolute path to the TeX template.
+    tex_template_path = get_resource_path("assets/custom_template.tex")
+    if not tex_template_path.exists():
+        raise FileNotFoundError(f"Custom TeX template not found at {tex_template_path}")
+
+    # 2. Create the manim.cfg content dynamically with the absolute path.
+    #    We escape backslashes for Windows paths.
+    config_content = (
+        "[CLI]\n"
+        "tex_compiler = xelatex\n"
+        f"tex_template = {tex_template_path.as_posix()}\n"
+    )
+
+    # 3. Write this dynamic config to the temporary working directory.
+    config_dest_path = temp_dir / "manim.cfg"
+    with open(config_dest_path, "w", encoding="utf-8") as f:
+        f.write(config_content)
+
+    print(f"Dynamically created manim.cfg at: {config_dest_path}")
     print(f"Executing Manim for scene: '{scene_name}' from file: '{temp_file_path.name}'")
-    cmd = [
-        "manim",
-        temp_file_path.name,
-        scene_name,
-        "-ql"
-    ]
+
+    # The command is now clean, as all config is in the .cfg file
+    cmd = ["manim", temp_file_path.name, scene_name, "-ql"]
 
     try:
-        # We need to run from the project root so Manim can find manim.cfg
-        # This requires adjusting file paths to be relative to the temp_dir.
-        # A better approach is to place manim.cfg where manim will find it.
-        # When packaged, the root is where the .exe is. We'll copy manim.cfg there.
-
-        # The CWD for the subprocess will be the temp directory.
-        # We must copy our config file there for Manim to find it.
-        config_source_path = get_resource_path("manim.cfg")
-        config_dest_path = temp_dir / "manim.cfg"
-        if config_source_path.exists():
-            import shutil
-            shutil.copy(config_source_path, config_dest_path)
-            print(f"Copied manim.cfg to {config_dest_path}")
-
         result = subprocess.run(
             cmd,
             capture_output=True,
             text=True,
             check=True,
             timeout=300,
-            cwd=temp_dir, # Run from the temp directory
+            cwd=temp_dir, # Run from the temp directory where manim.cfg is
             encoding='utf-8',
             errors='ignore'
         )
