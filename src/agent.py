@@ -12,9 +12,10 @@ def get_resource_path(relative_path: str) -> Path:
     """
     if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
         # Running in a PyInstaller bundle
+        # The _MEIPASS is a temporary directory created by PyInstaller
         base_path = Path(sys._MEIPASS)
     else:
-        # Running in a normal Python environment
+        # Running in a normal Python environment from the project root
         base_path = Path(".").resolve()
 
     return base_path / relative_path
@@ -24,7 +25,6 @@ def find_scene_class(code: str) -> Optional[str]:
     Finds the name of the Manim Scene class in the given code.
     It looks for a class that inherits from Scene, ThreeDScene, etc.
     """
-    # Regex to find a class that inherits from Scene or its variants
     match = re.search(r"class\s+([a-zA-Z_]\w*)\s*\(\s*(?:ThreeD|Zoomed|MovingCamera)?Scene\s*\):", code)
     if match:
         return match.group(1)
@@ -33,15 +33,6 @@ def find_scene_class(code: str) -> Optional[str]:
 def generate_video_from_code(manim_code: str) -> str:
     """
     Generates a video from a string of Manim code.
-
-    Args:
-        manim_code: A string containing the Python code for a Manim scene.
-
-    Returns:
-        The path to the generated video file.
-
-    Raises:
-        ValueError: If the scene class cannot be found or the video generation fails.
     """
     temp_dir = Path("temp_video_output")
     temp_dir.mkdir(exist_ok=True)
@@ -59,11 +50,22 @@ def generate_video_from_code(manim_code: str) -> str:
     # Get the correct path to the custom TeX template
     tex_template_path = get_resource_path("assets/custom_template.tex")
     print(f"Using TeX template: {tex_template_path}")
+    if not tex_template_path.exists():
+        raise FileNotFoundError(f"Custom TeX template not found at {tex_template_path}")
 
     print(f"Executing Manim for scene: '{scene_name}' from file: '{temp_file_path.name}'")
 
-    # Add the --tex_template flag to the Manim command
-    cmd = ["manim", temp_file_path.name, scene_name, "-ql", "--tex_template", str(tex_template_path)]
+    # Final, most robust command:
+    # - Use the more powerful 'xelatex' compiler.
+    # - Point to our custom, comprehensive TeX template.
+    cmd = [
+        "manim",
+        temp_file_path.name,
+        scene_name,
+        "-ql",
+        "--tex_compiler", "xelatex",
+        "--tex_template", str(tex_template_path)
+    ]
 
     try:
         result = subprocess.run(
@@ -94,7 +96,9 @@ def generate_video_from_code(manim_code: str) -> str:
 
     except subprocess.CalledProcessError as e:
         print("--- MANIM ERROR ---")
-        print(e.stderr)
+        print(f"Manim command failed with return code {e.returncode}")
+        print(f"Stdout: {e.stdout}")
+        print(f"Stderr: {e.stderr}")
         print("-------------------")
         raise ValueError(f"Manim failed to render the video. See logs for details. Error: {e.stderr}")
     except subprocess.TimeoutExpired as e:
