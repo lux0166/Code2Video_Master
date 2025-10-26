@@ -1,48 +1,64 @@
 import tkinter as tk
 from tkinter import messagebox
 import json
+import os
+import sys
 from agent import generate_video_for_knowledge_point
 
-def run_agent():
-    api_key = api_key_entry.get()
-    gemini_api_key = gemini_api_key_entry.get()
-    knowledge_point = knowledge_point_entry.get()
+def get_base_path():
+    """ Get the base path for the application, whether running from source or as a frozen executable. """
+    if getattr(sys, 'frozen', False):
+        # The application is running as a frozen executable (e.g., PyInstaller)
+        return os.path.dirname(sys.executable)
+    else:
+        # The application is running from source
+        return os.path.dirname(os.path.abspath(__file__))
 
-    if not api_key or not gemini_api_key or not knowledge_point:
-        messagebox.showerror("Error", "Please fill in all fields.")
-        return
+def main():
+    def run_agent():
+        api_key = api_key_entry.get()
+        gemini_api_key = gemini_api_key_entry.get()
+        knowledge_point = knowledge_point_entry.get()
 
-    config = {
-        "api_key": api_key,
-        "gemini_api_key": gemini_api_key
-    }
+        if not api_key or not gemini_api_key or not knowledge_point:
+            messagebox.showerror("Error", "Please fill in all fields.")
+            return
 
-    config_path = 'gpt_config.json'
-    with open(config_path, 'w') as f:
-        json.dump(config, f)
+        config = {
+            "api_key": api_key,
+            "gemini_api_key": gemini_api_key
+        }
 
-    try:
-        generate_video_for_knowledge_point(knowledge_point)
-        messagebox.showinfo("Success", "Video generation complete!")
-    except Exception as e:
-        messagebox.showerror("Error", f"An error occurred: {e}")
+        base_path = get_base_path()
+        config_path = os.path.join(base_path, 'gpt_config.json')
+        with open(config_path, 'w') as f:
+            json.dump(config, f)
 
-root = tk.Tk()
-root.title("Code2Video")
+        try:
+            generate_video_for_knowledge_point(knowledge_point)
+            messagebox.showinfo("Success", "Video generation complete!")
+        except Exception as e:
+            messagebox.showerror("Error", f"An error occurred: {e}")
 
-tk.Label(root, text="OpenAI API Key:").grid(row=0, column=0, padx=10, pady=5)
-api_key_entry = tk.Entry(root, width=50)
-api_key_entry.grid(row=0, column=1, padx=10, pady=5)
+    root = tk.Tk()
+    root.title("Code2Video")
 
-tk.Label(root, text="Gemini API Key:").grid(row=1, column=0, padx=10, pady=5)
-gemini_api_key_entry = tk.Entry(root, width=50)
-gemini_api_key_entry.grid(row=1, column=1, padx=10, pady=5)
+    tk.Label(root, text="OpenAI API Key:").grid(row=0, column=0, padx=10, pady=5)
+    api_key_entry = tk.Entry(root, width=50)
+    api_key_entry.grid(row=0, column=1, padx=10, pady=5)
 
-tk.Label(root, text="Knowledge Point:").grid(row=2, column=0, padx=10, pady=5)
-knowledge_point_entry = tk.Entry(root, width=50)
-knowledge_point_entry.grid(row=2, column=1, padx=10, pady=5)
+    tk.Label(root, text="Gemini API Key:").grid(row=1, column=0, padx=10, pady=5)
+    gemini_api_key_entry = tk.Entry(root, width=50)
+    gemini_api_key_entry.grid(row=1, column=1, padx=10, pady=5)
 
-run_button = tk.Button(root, text="Generate Video", command=run_agent)
-run_button.grid(row=3, columnspan=2, pady=10)
+    tk.Label(root, text="Knowledge Point:").grid(row=2, column=0, padx=10, pady=5)
+    knowledge_point_entry = tk.Entry(root, width=50)
+    knowledge_point_entry.grid(row=2, column=1, padx=10, pady=5)
 
-root.mainloop()
+    run_button = tk.Button(root, text="Generate Video", command=run_agent)
+    run_button.grid(row=3, columnspan=2, pady=10)
+
+    root.mainloop()
+
+if __name__ == '__main__':
+    main()

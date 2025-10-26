@@ -117,6 +117,33 @@ Unlike pixel-based text-to-video models, our approach leverages executable **Man
 
 ---
 
+## 🚀 Building the Executable
+
+To create a standalone executable for Code2Video, follow these steps:
+
+1.  **Install Dependencies:**
+    Make sure you have all the required Python libraries installed.
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+2.  **Run the Build Script:**
+
+    *   **For Linux/macOS:**
+        ```bash
+        sh build.sh
+        ```
+
+    *   **For Windows:**
+        ```bat
+        build.bat
+        ```
+
+3.  **Find the Executable:**
+    Once the build is complete, you will find the `Code2Video` executable inside the `dist/` directory.
+
+---
+
 ## 🚀 Try Code2Video
 
 <p align="center">
@@ -126,7 +153,6 @@ Unlike pixel-based text-to-video models, our approach leverages executable **Man
 ### 1. Requirements
 
 ```bash
-cd src/
 pip install -r requirements.txt
 ````
 

@@ -1,6 +1,8 @@
 import re
 import argparse
 import json
+import os
+import sys
 import time
 import random
 import subprocess
@@ -822,13 +824,23 @@ def get_api_and_output(API_name):
         raise ValueError("Invalid API model name")
 
 
+def get_base_path():
+    """ Get the base path for the application, whether running from source or as a frozen executable. """
+    if getattr(sys, 'frozen', False):
+        # The application is running as a frozen executable (e.g., PyInstaller)
+        return os.path.dirname(sys.executable)
+    else:
+        # The application is running from source
+        return os.path.dirname(os.path.abspath(__file__))
+
 def generate_video_for_knowledge_point(knowledge_point):
     api, folder_name = get_api_and_output("gpt-4o")
-    folder = Path(__file__).resolve().parent / "CASES" / f"TEST_{folder_name}"
+    base_path = get_base_path()
+    folder = os.path.join(base_path, "CASES", f"TEST_{folder_name}")
 
-    _CFG_PATH = Path(__file__).resolve().parent / "gpt_config.json"
-    if _CFG_PATH.exists():
-        with _CFG_PATH.open("r", encoding="utf-8") as _f:
+    _CFG_PATH = os.path.join(base_path, "gpt_config.json")
+    if os.path.exists(_CFG_PATH):
+        with open(_CFG_PATH, "r", encoding="utf-8") as _f:
             _CFG = json.load(_f)
         iconfinder_cfg = _CFG.get("iconfinder", {})
         iconfinder_api_key = iconfinder_cfg.get("api_key")
