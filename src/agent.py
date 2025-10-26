@@ -822,91 +822,52 @@ def get_api_and_output(API_name):
         raise ValueError("Invalid API model name")
 
 
-def build_and_parse_args():
-    parser = argparse.ArgumentParser()
-    # TODO: Core hyperparameters
-    parser.add_argument(
-        "--API",
-        type=str,
-        choices=["gpt-41", "claude", "gpt-5", "gpt-4o", "gpt-o4mini", "Gemini"],
-        default="gpt-41",
-    )
-    parser.add_argument(
-        "--folder_prefix",
-        type=str,
-        default="TEST",
-    )
-    parser.add_argument("--knowledge_file", type=str, default="long_video_topics_list.json")
-    parser.add_argument("--iconfinder_api_key", type=str, default="")
+def generate_video_for_knowledge_point(knowledge_point):
+    api, folder_name = get_api_and_output("gpt-4o")
+    folder = Path(__file__).resolve().parent / "CASES" / f"TEST_{folder_name}"
 
-    # Basically invariant parameters
-    parser.add_argument("--use_feedback", action="store_true", default=False)
-    parser.add_argument("--no_feedback", action="store_false", dest="use_feedback")
-    parser.add_argument("--use_assets", action="store_true", default=False)
-    parser.add_argument("--no_assets", action="store_false", dest="use_assets")
-
-    parser.add_argument("--max_code_token_length", type=int, help="max # token for generating code", default=10000)
-    parser.add_argument("--max_fix_bug_tries", type=int, help="max # tries for SR to fix bug", default=10)
-    parser.add_argument("--max_regenerate_tries", type=int, help="max # tries to regenerate", default=10)
-    parser.add_argument("--max_feedback_gen_code_tries", type=int, help="max # tries for Critic", default=3)
-    parser.add_argument("--max_mllm_fix_bugs_tries", type=int, help="max # tries for Critic to fix bug", default=3)
-    parser.add_argument("--feedback_rounds", type=int, default=2)
-
-    parser.add_argument("--parallel", action="store_true", default=False)
-    parser.add_argument("--no_parallel", action="store_false", dest="parallel")
-    parser.add_argument("--parallel_group_num", type=int, default=3)
-    parser.add_argument("--max_concepts", type=int, help="Limit # concepts for a quick run, -1 for all", default=-1)
-    parser.add_argument("--knowledge_point", type=str, help="if knowledge_file not given, can ignore", default=None)
-
-    return parser.parse_args()
-
-
-if __name__ == "__main__":
-    args = build_and_parse_args()
-
-    api, folder_name = get_api_and_output(args.API)
-    folder = Path(__file__).resolve().parent / "CASES" / f"{args.folder_prefix}_{folder_name}"
-
-    _CFG_PATH = pathlib.Path(__file__).with_name("api_config.json")
-    with _CFG_PATH.open("r", encoding="utf-8") as _f:
-        _CFG = json.load(_f)
-    iconfinder_cfg = _CFG.get("iconfinder", {})
-    args.iconfinder_api_key = iconfinder_cfg.get("api_key")
-    if args.iconfinder_api_key:
-        print(f"Iconfinder API Key: {args.iconfinder_api_key}")
+    _CFG_PATH = Path(__file__).resolve().parent / "gpt_config.json"
+    if _CFG_PATH.exists():
+        with _CFG_PATH.open("r", encoding="utf-8") as _f:
+            _CFG = json.load(_f)
+        iconfinder_cfg = _CFG.get("iconfinder", {})
+        iconfinder_api_key = iconfinder_cfg.get("api_key")
+        if iconfinder_api_key:
+            print(f"Iconfinder API Key: {iconfinder_api_key}")
+        else:
+            print("WARNING: Iconfinder API key not found in config file. Using default (None).")
     else:
-        print("WARNING: Iconfinder API key not found in config file. Using default (None).")
+        iconfinder_api_key = ""
+        print("WARNING: gpt_config.json not found.")
 
-    if args.knowledge_point:
-        print(f"🔄 Single knowledge point mode: {args.knowledge_point}")
-        knowledge_points = [args.knowledge_point]
-        args.parallel_group_num = 1
-    elif args.knowledge_file:
-        with open(Path(__file__).resolve().parent / "json_files" / args.knowledge_file, "r", encoding="utf-8") as f:
-            knowledge_points = json.load(f)
-            if args.max_concepts is not None:
-                knowledge_points = knowledge_points[: args.max_concepts]
-    else:
-        raise ValueError("Must provide --knowledge_point | --knowledge_file")
+    knowledge_points = [knowledge_point]
 
     cfg = RunConfig(
         api=api,
-        iconfinder_api_key=args.iconfinder_api_key,
-        use_feedback=args.use_feedback,
-        use_assets=args.use_assets,
-        max_code_token_length=args.max_code_token_length,
-        max_fix_bug_tries=args.max_fix_bug_tries,
-        max_regenerate_tries=args.max_regenerate_tries,
-        max_feedback_gen_code_tries=args.max_feedback_gen_code_tries,
-        max_mllm_fix_bugs_tries=args.max_mllm_fix_bugs_tries,
-        feedback_rounds=args.feedback_rounds,
+        iconfinder_api_key=iconfinder_api_key,
+        use_feedback=True,
+        use_assets=True,
+        max_code_token_length=10000,
+        max_fix_bug_tries=10,
+        max_regenerate_tries=10,
+        max_feedback_gen_code_tries=3,
+        max_mllm_fix_bugs_tries=3,
+        feedback_rounds=2,
     )
 
     run_Code2Video(
         knowledge_points,
         folder,
-        parallel=args.parallel,
-        batch_size=max(1, int(len(knowledge_points) / args.parallel_group_num)),
-        max_workers=get_optimal_workers(),
+        parallel=False,
         cfg=cfg,
     )
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--knowledge_point", type=str, help="if knowledge_file not given, can ignore", default=None)
+    args = parser.parse_args()
+
+    if args.knowledge_point:
+        generate_video_for_knowledge_point(args.knowledge_point)
+    else:
+        raise ValueError("Must provide --knowledge_point")
